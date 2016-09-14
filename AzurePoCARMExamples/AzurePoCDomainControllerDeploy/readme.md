@@ -6,5 +6,3 @@
 </a>
 
 This template creates a Domain Controller VM in an existing AD domain
-
-Tip: To get the certData from pfx file in PowerShell you can use this: [System.Convert]::ToBase64String([System.IO.File]::ReadAllBytes("path to pfx file"))
