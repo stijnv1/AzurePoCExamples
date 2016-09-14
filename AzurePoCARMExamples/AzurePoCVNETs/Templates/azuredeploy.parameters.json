@@ -1,0 +1,68 @@
+﻿{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+  "parameters": {
+    "vNetName": {
+      "value": ""
+    },
+
+    "vNetAddressPrefix": {
+      "value": ""
+    },
+
+    "Location": {
+      "value": "West Europe"
+    },
+
+    "vNetSubnetName1": {
+      "value": ""
+    },
+
+    "vnetSubnetPrefix1": {
+      "value": ""
+    },
+
+    "vpnType": {
+      "value": "RouteBased"
+    },
+
+    "localGatewayName": {
+      "value": ""
+    },
+
+    "localGatewayIpAddress": {
+      "value": ""
+    },
+
+    "localAddressPrefix": {
+      "value": ""
+    },
+
+    "gatewaySubnetPrefix": {
+      "value": ""
+    },
+
+    "gatewaySubnetName": {
+      "value": ""
+    },
+
+    "gatewayPublicIPName": {
+      "value": ""
+    },
+
+    "gatewayName": {
+      "value": ""
+    },
+
+    "gatewaySku": {
+      "value": "Basic"
+    },
+
+    "connectionName": {
+      "value": ""
+    },
+    "sharedKey": {
+      "value": ""
+    }
+  }
+}

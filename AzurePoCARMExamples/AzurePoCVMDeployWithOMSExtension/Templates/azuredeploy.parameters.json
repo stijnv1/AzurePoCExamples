@@ -1,0 +1,85 @@
+﻿{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "StorageAccountName": {
+      "value": ""
+    },
+
+    "storageAccountType": {
+      "value": "Standard_LRS"
+    },
+
+    "adminUsername": {
+      "value": ""
+    },
+
+    "adminPassword": {
+      "value": ""
+    },
+
+    "windowsOSVersion": {
+      "value": "2012-R2-Datacenter"
+    },
+
+    "vmName": {
+      "value": ""
+    },
+
+    "vmSize": {
+      "value": "Standard_A2"
+    },
+
+    "vnetRG": {
+      "value": ""
+    },
+
+    "vnetName": {
+      "value": ""
+    },
+
+    "vnetSubnetName": {
+      "value": ""
+    },
+
+    "AvailabilitySetName": {
+      "value": "AS_OMSForwarders"
+    },
+    "domainName": {
+      "value": ""
+    },
+
+    "domainAdminUserName": {
+      "value": ""
+    },
+
+    "domainAdminPassword": {
+      "value": ""
+    },
+
+    "workspaceId": {
+      "value": ""
+    },
+
+    "workspaceName": {
+      "value": ""
+    },
+
+    "workspaceResourceGroup": {
+      "value": ""
+    },
+
+    "ouPath": {
+      "value": ""
+    },
+
+    "domainJoinOptions": {
+      "value": 3
+    },
+
+    "staticInternalIPAddress": {
+      "value": ""
+    }
+
+  }
+}

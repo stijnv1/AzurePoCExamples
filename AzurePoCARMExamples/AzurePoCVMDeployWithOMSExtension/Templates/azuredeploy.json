@@ -1,0 +1,312 @@
+﻿{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "StorageAccountName": {
+      "type": "string",
+      "defaultValue": "stasverho1982",
+      "metadata": {
+        "Description": "Name of the storage account"
+      }
+    },
+
+    "storageAccountType": {
+      "type": "string",
+      "allowedValues": [
+        "Standard_LRS",
+        "Standard_GRS",
+        "Standard_RAGRS",
+        "Standard_ZRS",
+        "Premium_LRS"
+      ],
+      "metadata": {
+        "description": "The type of the Storage Account created"
+      },
+      "defaultValue": "Standard_LRS"
+    },
+
+    "adminUsername": {
+      "type": "string",
+      "metadata": {
+        "description": "Username for the Virtual Machine."
+      }
+    },
+
+    "adminPassword": {
+      "type": "securestring",
+      "metadata": {
+        "description": "Password for the Virtual Machine."
+      }
+    },
+
+    "domainAdminUserName": {
+      "type": "string"
+    },
+
+    "domainAdminPassword": {
+      "type": "securestring"
+    },
+
+    "windowsOSVersion": {
+      "type": "string",
+      "defaultValue": "2012-R2-Datacenter",
+      "allowedValues": [
+        "2008-R2-SP1",
+        "2012-Datacenter",
+        "2012-R2-Datacenter"
+      ],
+      "metadata": {
+        "description": "The Windows version for the VM. This will pick a fully patched image of this given Windows version. Allowed values: 2008-R2-SP1, 2012-Datacenter, 2012-R2-Datacenter."
+      }
+    },
+
+    "vmName": {
+      "type": "string",
+      "defaultValue": "vm1",
+      "metadata": {
+        "Description": "Name of the VM"
+      }
+    },
+
+    "vmSize": {
+      "type": "string",
+      "defaultValue": "Standard_A1",
+      "metadata": {
+        "Description": "Size of the VM"
+      }
+    },
+
+    "vnetRG": {
+      "type": "string",
+      "metadata": {
+        "Description": "Name of the RG of the VNET"
+      }
+    },
+
+    "vnetName": {
+      "type": "string",
+      "defaultValue": "OpsTrainingVNET",
+      "metadata": {
+        "Description": "VNET Name"
+      }
+    },
+
+    "vnetSubnetName": {
+      "type": "string",
+      "defaultValue": "Apps",
+      "metadata": {
+        "Description": "VNET Subnet Name"
+      }
+    },
+
+    "AvailabilitySetName": {
+      "type": "string",
+      "minLength": 1
+    },
+
+    "domainName": {
+      "type": "string"
+    },
+
+    "workspaceId": {
+      "type": "string"
+    },
+
+    "workspaceName": {
+      "type": "string"
+    },
+
+    "workspaceResourceGroup": {
+      "type": "string"
+    },
+
+    "ouPath": {
+      "type": "string",
+      "metadata": {
+        "descriptoin": "The distinguished name of the OU in which the computer object must be created"
+      }
+    },
+
+    "domainJoinOptions": {
+      "type": "int"
+    },
+
+    "staticInternalIPAddress": {
+      "type": "string"
+    }
+
+  },
+  "variables": {
+    "apiVersion": {
+      "VM": {
+        "general": "2015-06-15",
+        "DSCExtension": "2015-05-01-preview"
+      }
+    },
+    "vnetID": "[resourceid(parameters('vnetRG'),'Microsoft.Network/virtualNetworks',parameters('vnetName'))]",
+    "subnetID": "[concat(variables('vnetID'),'/subnets/', parameters('vnetSubnetName'))]",
+    "imagePublisher": "MicrosoftWindowsServer",
+    "imageOffer": "WindowsServer",
+    "nicName": "[concat(parameters('vmName'),'_VNIC')]",
+    "vmStorageAccountContainerName": "vhds",
+    "OSDiskName": "[concat(parameters('vmName'),'_OSDisk')]",
+    "sizeOfDiskInGB": "20",
+    "dataDisk1VhdName": "[concat(parameters('vmName'),'_DataDisk1')]"
+  },
+  "resources": [
+    {
+      "name": "[parameters('AvailabilitySetName')]",
+      "type": "Microsoft.Compute/availabilitySets",
+      "location": "[resourceGroup().location]",
+      "apiVersion": "[variables('apiVersion').VM.general]",
+      "dependsOn": [ ],
+      "properties": {
+        "platformUpdateDomainCount": 2,
+        "platformFaultDomainCount": 3
+      }
+    },
+
+    {
+      "type": "Microsoft.Storage/storageAccounts",
+      "name": "[parameters('StorageAccountName')]",
+      "apiVersion": "[variables('apiVersion').VM.general]",
+      "location": "[resourceGroup().location]",
+      "properties": {
+        "accountType": "[parameters('storageAccountType')]"
+      }
+    },
+
+    {
+      "apiVersion": "[variables('apiVersion').VM.general]",
+      "type": "Microsoft.Network/networkInterfaces",
+      "name": "[variables('nicName')]",
+      "location": "[resourceGroup().location]",
+      "properties": {
+        "ipConfigurations": [
+          {
+            "name": "ipconfig1",
+            "properties": {
+              "privateIPAddress": "[parameters('staticInternalIPAddress')]",
+              "privateIPAllocationMethod": "Static",
+              "subnet": {
+                "id": "[variables('subnetID')]"
+              }
+            }
+          }
+        ]
+      }
+    },
+
+    {
+      "apiVersion": "[variables('apiVersion').VM.general]",
+      "type": "Microsoft.Compute/virtualMachines",
+      "name": "[parameters('vmName')]",
+      "location": "[resourceGroup().location]",
+      "dependsOn": [
+        "[concat('Microsoft.Storage/storageAccounts/', parameters('StorageAccountName'))]",
+        "[concat('Microsoft.Network/networkInterfaces/', variables('nicName'))]",
+        "[concat('Microsoft.Compute/availabilitySets/', parameters('AvailabilitySetName'))]"
+      ],
+
+      "properties": {
+        "availabilitySet": {
+          "id": "[resourceId('Microsoft.Microsoft.Compute/availabilitySets',parameters('AvailabilitySetName'))]"
+        },
+        "hardwareProfile": {
+          "vmSize": "[parameters('vmSize')]"
+        },
+        "osProfile": {
+          "computerName": "[parameters('vmName')]",
+          "adminUsername": "[parameters('adminUsername')]",
+          "adminPassword": "[parameters('adminPassword')]"
+        },
+        "storageProfile": {
+          "imageReference": {
+            "publisher": "[variables('imagePublisher')]",
+            "offer": "[variables('imageOffer')]",
+            "sku": "[parameters('windowsOSVersion')]",
+            "version": "latest"
+          },
+          "osDisk": {
+            "name": "osdisk",
+            "vhd": {
+              "uri": "[concat('http://',parameters('StorageAccountName'),'.blob.core.windows.net/',variables('vmStorageAccountContainerName'),'/',variables('OSDiskName'),'.vhd')]"
+            },
+            "caching": "ReadWrite",
+            "createOption": "FromImage"
+          },
+          "dataDisks": [
+            {
+              "name": "datadisk1",
+              "diskSizeGB": "[variables('sizeOfDiskInGB')]",
+              "lun": 0,
+              "vhd": {
+                "uri": "[concat('http://',parameters('StorageAccountName'),'.blob.core.windows.net/',variables('vmStorageAccountContainerName'),'/',variables('dataDisk1VhdName'),'.vhd')]"
+              },
+              "createOption": "Empty"
+            }
+          ]
+        },
+        "networkProfile": {
+          "networkInterfaces": [
+            {
+              "id": "[resourceId('Microsoft.Network/networkInterfaces',variables('nicName'))]"
+            }
+          ]
+        }
+      },
+      "resources": [
+        {
+          "type": "extensions",
+          "name": "Microsoft.EnterpriseCloud.Monitoring",
+          "apiVersion": "[variables('apiVersion').VM.general]",
+          "location": "[resourceGroup().location]",
+          "dependsOn": [
+            "[concat('Microsoft.Compute/virtualMachines/', parameters('vmName'))]"
+          ],
+          "properties": {
+            "publisher": "Microsoft.EnterpriseCloud.Monitoring",
+            "type": "MicrosoftMonitoringAgent",
+            "typeHandlerVersion": "1.0",
+            "autoUpgradeMinorVersion": true,
+            "settings": {
+              "workspaceId": "[parameters('workspaceId')]"
+            },
+            "protectedSettings": {
+              "workspaceKey": "[listKeys(resourceId(parameters('workspaceResourceGroup'),'Microsoft.OperationalInsights/workspaces', parameters('workspaceName')), '2015-03-20').primarySharedKey]"
+            }
+          }
+        }
+      ]
+    },
+
+    {
+      "apiVersion": "[variables('apiVersion').VM.general]",
+      "type": "Microsoft.Compute/virtualMachines/extensions",
+      "name": "[concat(parameters('vmName'),'/joindomain')]",
+      "location": "[resourceGroup().location]",
+      "dependsOn": [
+        "[concat('Microsoft.Compute/virtualMachines/', parameters('vmName'))]"
+      ],
+      "properties": {
+        "publisher": "Microsoft.Compute",
+        "type": "JsonADDomainExtension",
+        "typeHandlerVersion": "1.3",
+        "autoUpgradeMinorVersion": true,
+        "settings": {
+          "Name": "[parameters('domainName')]",
+          "OUPath": "[parameters('ouPath')]",
+          "User": "[concat(parameters('domainName'),'\\',parameters('domainAdminUserName'))]",
+          "Restart": "true",
+          "Options": "[parameters('domainJoinOptions')]"
+        },
+        "protectedsettings": {
+          "Password": "[parameters('domainAdminPassword')]"
+        }
+      }
+    }
+
+  ],
+  "outputs": {
+  }
+}
