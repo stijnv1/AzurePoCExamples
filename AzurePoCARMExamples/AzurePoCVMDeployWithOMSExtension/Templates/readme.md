@@ -7,4 +7,4 @@
     <img src="http://armviz.io/visualizebutton.png"/>
 </a>
 
-This template creates a a Windows Server 2012 R2 VM which registers automatically in Azure Log Analytics (OMS)
+This template creates a Windows Server 2012 R2 VM which registers automatically in Azure Log Analytics (OMS)
