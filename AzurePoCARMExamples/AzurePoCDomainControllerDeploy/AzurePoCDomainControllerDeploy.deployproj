@@ -31,6 +31,7 @@
     <Content Include="Deploy-AzureResourceGroup.ps1" />
     <Content Include="Templates\azuredeploy.json" />
     <Content Include="Templates\azuredeploy.parameters.json" />
+    <None Include="DSC\CreateADBDC.ps1.zip" />
     <None Include="Templates\readme.md" />
   </ItemGroup>
   <Target Name="GetReferenceAssemblyPaths" />
