@@ -37,6 +37,38 @@
       "metadata": {
         "description": "VM Size"
       }
+    },
+
+    "storageAccountName": {
+      "type": "string",
+      "metadata": {
+        "description": "Name of the Azure storage account. Must be a unique name. This can be checked by using following powershell cmdlet: Get-AzureRmStorageAccountNameAvailability"
+      }
+    },
+
+    "storageAccountSKU": {
+      "type": "string",
+      "allowedValues": [
+        "StandardLRS",
+        "StandardGRS"
+      ],
+      "metadata": {
+        "description": "Storage account SKU"
+      }
+    },
+
+    "OMSWorkspaceID": {
+      "type": "string",
+      "metadata": {
+        "description": "Workspace ID of OMS"
+      }
+    },
+
+    "OMSWorkspaceName": {
+      "type": "string",
+      "metadata": {
+        "description": "Name of the OMS workspace"
+      }
     }
   },
 
