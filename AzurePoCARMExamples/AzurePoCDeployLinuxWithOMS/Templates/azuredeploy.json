@@ -69,13 +69,40 @@
       "metadata": {
         "description": "Name of the OMS workspace"
       }
+    },
+
+    "vnetRG": {
+      "type": "string",
+      "metadata": {
+        "description": "Name of the Azure Resource Group the VNET belongs to."
+      }
+    },
+
+    "vnetName": {
+      "type": "string",
+      "metadata": {
+        "description": "Name of the VNET the VM must be connected with."
+      }
+    },
+
+    "vnetSubnetName": {
+      "type": "string",
+      "metadata": {
+        "description": "Name of the VNET subnet the VM must be connected with."
+      }
     }
   },
 
   "variables": {
     "apiversion": {
       "VM": "2015-08-01"
-    }
+    },
+    "vnetID": "[resourceId(parameters('vnetRG'),'Microsoft.Network/virtualNetworks',parameters('vnetName'))]",
+    "subnetRef": "[concat(variables('vnetID'),'/subnets/', parameters('vnetSubnetName'))]",
+    "imagePublisher": "OpenLogic",
+    "imageOffer": "CentOS",
+    "OSDiskName": "[concat(parameters('vmName'),'_OSDisk')]",
+    "nicName": "[concat('VNIC_', parameters('vmName'),'_',parameters('vnetSubnetName'))]"
   },
 
   "resources": [
